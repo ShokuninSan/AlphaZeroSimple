@@ -22,5 +22,5 @@ action_size = game.get_action_size()
 
 model = Connect2Model(board_size, action_size, device)
 
-trainer = Trainer(game, model, args)
+trainer = Trainer(game, model, args, device)
 trainer.learn()

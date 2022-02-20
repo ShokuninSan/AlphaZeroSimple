@@ -9,11 +9,12 @@ from monte_carlo_tree_search import MCTS
 
 class Trainer:
 
-    def __init__(self, game, model, args):
+    def __init__(self, game, model, args, device):
         self.game = game
         self.model = model
         self.args = args
         self.mcts = MCTS(self.game, self.model, self.args)
+        self.device = device
 
     def exceute_episode(self):
 
@@ -21,10 +22,12 @@ class Trainer:
         current_player = 1
         state = self.game.get_init_board()
 
+        # play a MCTS guided, single game
         while True:
             canonical_board = self.game.get_canonical_board(state, current_player)
 
             self.mcts = MCTS(self.game, self.model, self.args)
+            # run MCTS until leaf node is reached (ie game ended)
             root = self.mcts.run(self.model, canonical_board, to_play=1)
 
             action_probs = [0 for _ in range(self.game.get_action_size())]
@@ -80,9 +83,9 @@ class Trainer:
                 target_vs = torch.FloatTensor(np.array(vs).astype(np.float64))
 
                 # predict
-                boards = boards.contiguous().cuda()
-                target_pis = target_pis.contiguous().cuda()
-                target_vs = target_vs.contiguous().cuda()
+                boards = boards.contiguous().to(self.device)
+                target_pis = target_pis.contiguous().to(self.device)
+                target_vs = target_vs.contiguous().to(self.device)
 
                 # compute output
                 out_pi, out_v = self.model(boards)

@@ -95,6 +95,14 @@ class MCTS:
         self.args = args
 
     def run(self, model, state, to_play):
+        """
+        Runs the MCTS algorithm.
+
+        :param model: neural policy/value network.
+        :param state: state from the perspective of player 1 (always).
+        :param to_play: player (always 1).
+        :return: tree.
+        """
 
         root = Node(0, to_play)
 
